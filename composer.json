@@ -1,0 +1,36 @@
+{
+    "name": "sellvation/onewelcome",
+    "description": "OneWelcome API",
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "Sellvation\\OneWelcome\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Sellvation Marketing B.V."
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "beberlei/assert": "^v2.9",
+        "guzzlehttp/guzzle": "^7.0",
+        "nesbot/carbon": "2.x-dev",
+        "ext-json": "*",
+        "php": "^7.3"
+    },
+    "config": {
+        "allow-plugins": {
+            "phpro/grumphp": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    },
+    "require-dev": {
+        "brianium/paratest": "dev-master",
+        "phpro/grumphp": "^1.5",
+        "slevomat/coding-standard": "7.x-dev",
+        "phpstan/phpstan": "1.6.x-dev",
+        "phpunit/phpunit": "9.5.x-dev"
+    }
+}

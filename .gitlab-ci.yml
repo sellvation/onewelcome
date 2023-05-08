@@ -1,0 +1,21 @@
+stages:
+  - build
+  - test
+
+.job_template: &template
+  image: sellvation/ccmp:php73
+  allow_failure: false
+
+build:
+  <<: *template
+  stage: build
+  artifacts:
+    untracked: true
+  script:
+    - composer install
+
+grumphp:
+  <<: *template
+  stage: test
+  script:
+    - php ./vendor/bin/grumphp run

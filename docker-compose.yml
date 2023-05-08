@@ -1,0 +1,13 @@
+version: '3.7'
+
+services:
+  onewelcome:
+    container_name: onewelcome
+    image: sellvation/ccmp:php73
+    working_dir: /var/www/html
+    ports:
+      - "80:80"
+    env_file:
+      - .env
+    volumes:
+      - ./:/var/www/html
