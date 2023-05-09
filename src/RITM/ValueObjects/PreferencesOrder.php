@@ -56,32 +56,32 @@ class PreferencesOrder
         return $instance;
     }
 
-    public function getCommunicationLevel(): string
+    public function getCommunicationLevel(): ?string
     {
         return $this->communicationLevel;
     }
 
-    public function getMyStore(): string
+    public function getMyStore(): ?string
     {
         return $this->myStore;
     }
 
-    public function getCustomerRemark(): string
+    public function getCustomerRemark(): ?string
     {
         return $this->customerRemark;
     }
 
-    public function getAlternateProduct(): string
+    public function getAlternateProduct(): ?string
     {
         return $this->alternateProduct;
     }
 
-    public function getCommunicationChannel(): string
+    public function getCommunicationChannel(): ?string
     {
         return $this->communicationChannel;
     }
 
-    public function getGenericRemark(): string
+    public function getGenericRemark(): ?string
     {
         return $this->genericRemark;
     }
