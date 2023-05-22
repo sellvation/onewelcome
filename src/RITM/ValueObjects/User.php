@@ -397,11 +397,10 @@ class User
     /**
      * Returns a unique fingerprint for the current data in the User object.
      * When user data changes, the fingerprint will change as well.
-     * @throws JsonException
      */
     public function getFingerprint(): string
     {
-        return hash('ripemd160', $this->toJson());
+        return hash('ripemd160', $this->toSerialize());
     }
 
     /**
@@ -410,6 +409,11 @@ class User
     public function toJson(): string
     {
         return json_encode($this->toArray(), JSON_THROW_ON_ERROR);
+    }
+
+    public function toSerialize(): string
+    {
+        return serialize($this->toArray());
     }
 
     public function toArray(): array
