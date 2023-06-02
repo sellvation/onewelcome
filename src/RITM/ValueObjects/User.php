@@ -46,6 +46,11 @@ class User
     private $state;
 
     /**
+     * @var string
+     */
+    private $birthDate;
+
+    /**
      * @var EmailCollection
      */
     private $emailCollection;
@@ -89,6 +94,10 @@ class User
      * @var bool
      */
     private $hasEmployeeDiscount = false;
+    /**
+     * @var bool
+     */
+    private $hasAgreedPrivacyPolicy = false;
     /**
      * @var B2B
      */
@@ -148,7 +157,9 @@ class User
         $instance->isEmployee = (bool) ($profile['IsEmployee'] ?? false);
         $instance->hasEmployeeDiscount = (bool) ($profile['HasEmployeeDiscount'] ?? false);
         $instance->hasLoyaltyCard = (bool) ($info['HasLoyaltyCard'] ?? false);
+        $instance->hasAgreedPrivacyPolicy = (bool) ($info['HasAgreedPLUSPrivacyPolicy'] ?? false);
         $instance->state = $profile['urn:scim:schemas:extension:iwelcome:1.0']['state'];
+        $instance->birthDate = $profile['urn:scim:schemas:extension:iwelcome:1.0']['birthDate'] ?? null;
         $instance->emailCollection = EmailCollection::fromArray($profile['emails']);
 
         $instance->firstName = $info['FirstName'] ?? null;
@@ -302,6 +313,28 @@ class User
         return $this->state;
     }
 
+    public function getBirthDate(): ?string
+    {
+        return $this->birthDate;
+    }
+
+    public function setBirthDate(string $birthDate): self
+    {
+        $this->birthDate = $birthDate;
+        return $this;
+    }
+
+    public function getHasAgreedPrivacyPolicy(): bool
+    {
+        return $this->hasAgreedPrivacyPolicy;
+    }
+
+    public function setHasAgreedPrivacyPolicy(bool $hasAgreedPrivacyPolicy): self
+    {
+        $this->hasAgreedPrivacyPolicy = $hasAgreedPrivacyPolicy;
+        return $this;
+    }
+
     public function isB2B(): bool
     {
         return $this->isB2B;
@@ -397,11 +430,10 @@ class User
     /**
      * Returns a unique fingerprint for the current data in the User object.
      * When user data changes, the fingerprint will change as well.
-     * @throws JsonException
      */
     public function getFingerprint(): string
     {
-        return hash('ripemd160', $this->toJson());
+        return hash('ripemd160', $this->toSerialize());
     }
 
     /**
@@ -410,6 +442,11 @@ class User
     public function toJson(): string
     {
         return json_encode($this->toArray(), JSON_THROW_ON_ERROR);
+    }
+
+    public function toSerialize(): string
+    {
+        return serialize($this->toArray());
     }
 
     public function toArray(): array
@@ -421,6 +458,8 @@ class User
             'firstName' => $this->firstName,
             'middleName' => $this->middleName,
             'state' => $this->state,
+            'hasAgreedPrivacyPolicy' => $this->hasAgreedPrivacyPolicy,
+            'birthDate' => $this->birthDate,
             'emails' => $this->emailCollection->toArray(),
             'phoneNumberCollection' => $this->phoneNumberCollection->toArray(),
             'postAddressCollection' => $this->postAddressCollection->toArray(),
@@ -453,13 +492,15 @@ class User
                     'middleName' => $this->getMiddleName(),
                 ],
                 'urn:scim:schemas:extension:iwelcome:1.0' => [
-                    'state' => $this->getState()
+                    'state' => $this->getState(),
+                    'birthDate' => $this->getBirthDate()
                 ],
                 getenv('RITM_CUSTOMER_TAG') => [
                     getenv('RITM_CUSTOMER_KEY') => $this->getCustomerId(),
                     'IsB2B' => $this->isB2B(),
                     'IsB2C' => $this->isB2C(),
                     'HasLoyaltyCard' => $this->hasLoyaltyCard(),
+                    'HasAgreedPLUSPrivacyPolicy' => $this->getHasAgreedPrivacyPolicy(),
                 ]
             ]
         ];
