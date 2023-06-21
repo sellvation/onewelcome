@@ -9,6 +9,7 @@ use Assert\AssertionFailedException;
 use JsonException;
 use Sellvation\OneWelcome\Notification\Event;
 use Sellvation\OneWelcome\RITM\Collections\AddressCollection;
+use Sellvation\OneWelcome\RITM\Collections\B2BCollection;
 use Sellvation\OneWelcome\RITM\Collections\EmailCollection;
 use Sellvation\OneWelcome\RITM\Collections\LoyaltyCollection;
 use Sellvation\OneWelcome\RITM\Collections\PhoneNumberCollection;
@@ -99,9 +100,9 @@ class User
      */
     private $hasAgreedPrivacyPolicy = false;
     /**
-     * @var B2B
+     * @var b2bCollection
      */
-    private $b2b;
+    private $b2bCollection;
 
     /**
      * @var Payment
@@ -121,6 +122,7 @@ class User
     private function __construct()
     {
         $this->loyaltyCollection = new LoyaltyCollection();
+        $this->b2bCollection = new B2BCollection();
         $this->emailCollection = new EmailCollection();
         $this->phoneNumberCollection = new PhoneNumberCollection();
         $this->postAddressCollection = new AddressCollection();
@@ -171,9 +173,9 @@ class User
             $instance->preferencesOrder = PreferencesOrder::fromArray($info['PreferencesOrder']);
         }
 
-        if (true === isset($profile['B2B'])) {
-            Assertion::isArray($profile, 'B2B');
-            $instance->b2b = B2B::fromArray($profile['B2B']);
+        if (true === isset($info['B2BAccounts'])) {
+            Assertion::isArray($info, 'B2BAccounts');
+            $instance->b2bCollection = B2BCollection::fromArray($info['B2BAccounts']);
         }
 
         if (true === isset($info['Payment'])) {
@@ -383,14 +385,14 @@ class User
         return $this;
     }
 
-    public function getB2b(): ?B2B
+    public function getB2bs(): B2BCollection
     {
-        return $this->b2b;
+        return $this->b2bCollection;
     }
 
-    public function setB2b(B2B $b2b): self
+    public function setB2bs(B2BCollection $b2bs): self
     {
-        $this->b2b = $b2b;
+        $this->b2bCollection = $b2bs;
         return $this;
     }
 
@@ -469,7 +471,7 @@ class User
             'isB2B' => $this->isB2B,
             'isB2C' => $this->isB2C,
             'hasLoyaltyCard' => $this->hasLoyaltyCard,
-            'b2b' => $this->b2b,
+            'b2b' => $this->b2bCollection->toArray(),
             'payment' => $this->payment,
         ];
     }
@@ -505,8 +507,8 @@ class User
             ]
         ];
 
-        if ($b2b = $this->getB2b()) {
-            $output['B2B'] = $b2b->toOneWelcomeFormat();
+        if ($b2bCollection->count() > 0) {
+            $output['B2BAccounts'] = $b2bCollection->toOneWelcomeFormat();
         }
 
         if (null !== $payment) {
