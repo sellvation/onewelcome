@@ -54,7 +54,7 @@ class RITMClient extends AbstractClient
     /**
      * @throws APIException|JsonException
      */
-    public function saveStateForUserUUID(string $uuid, string $state): bool
+    public function saveStateForUserUUID(string $uuid, string $state, string $dateTimestampString): bool
     {
         Event::validateState($state);
 
@@ -66,6 +66,9 @@ class RITMClient extends AbstractClient
                 'profileInformation' => [
                     'urn:scim:schemas:extension:iwelcome:1.0' => [
                         'state' => $state
+                    ],
+                    'urn:scim:schemas:extension:plus:1.0' => [
+                        'LastActivityDate' => $dateTimestampString
                     ]
                 ]
             ], JSON_THROW_ON_ERROR)
