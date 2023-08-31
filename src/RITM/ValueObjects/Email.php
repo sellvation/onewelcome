@@ -31,10 +31,12 @@ class Email
     {
         Assertion::keyExists($data, 'value');
         Assertion::keyExists($data, 'type');
+        Assertion::keyExists($data, 'primary');
 
         $instance = new self();
         $instance->value = $data['value'];
         $instance->type = $data['type'];
+        $instance->primary = $data['primary'];
 
         return $instance;
     }
@@ -48,12 +50,18 @@ class Email
     {
         return $this->type;
     }
+    
+    public function getPrimary(): bool
+    {
+        return $this->primary;
+    }
 
     public function toOneWelcomeFormat(): array
     {
         return [
             'value' => $this->getValue(),
-            'type' => $this->getType()
+            'type' => $this->getType(),
+            'primary' => $this->getPrimary()
         ];
     }
 }
