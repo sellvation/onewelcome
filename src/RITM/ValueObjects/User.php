@@ -541,4 +541,17 @@ class User
 
         return $output;
     }
+
+    public function getPrimaryEmailAddress(): ?Email
+    {
+        foreach ($this->emailCollection as $email) {
+            if (false === $email->getPrimary()) {
+                continue;
+            }
+
+            return $email;
+        }
+
+        return null;
+    }
 }
