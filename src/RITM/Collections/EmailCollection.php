@@ -35,6 +35,11 @@ class EmailCollection extends AbstractCollection
         return ($item = current($this->items)) ? $item : null;
     }
 
+    public function first(): ?Email
+    {
+        return ($item = reset($this->items)) ? $item : null;
+    }
+
     public function next(): ?Email
     {
         return ($item = next($this->items)) ? $item : null;
