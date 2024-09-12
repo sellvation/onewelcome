@@ -41,7 +41,8 @@ class APIClient
     {
         /** @var Request $requestWithAddedHeader */
         $requestWithAddedHeader = $request->withAddedHeader('Authorization', 'Bearer ' . $credentials->getAccessToken());
-        return $this->execute($requestWithAddedHeader, $parameters);
+        $requestWithAddedHeader2 = $requestWithAddedHeader->withAddedHeader('x-plus-auth', 't7yw3jtw8478twy342t7834tyw3thwe78wyntwehnrt4wy8et7w3th');
+        return $this->execute($requestWithAddedHeader2, $parameters);
     }
 
     /**
@@ -51,6 +52,7 @@ class APIClient
     {
         try {
             $headers = $request->getHeaders();
+            $headers['x-plus-auth'] = ['t7yw3jtw8478twy342t7834tyw3thwe78wyntwehnrt4wy8et7w3th'];
             $body = $request->getBody();
             $options = [];
 
@@ -90,9 +92,14 @@ class APIClient
      */
     public function obtainCredentials(APIConfigInterface $apiConfig): Credentials
     {
+        error_log('CIAM START CUSTOM LOGGING --');
+
         try {
             $request = new Request('POST', $apiConfig->getAuthenticationURL());
-            $request->withHeader('Content-Type', 'application/x-www-form-urlencoded');
+            $request = $request->withHeader('Content-Type', 'application/x-www-form-urlencoded');
+            $request = $request->withHeader('x-plus-auth', 't7yw3jtw8478twy342t7834tyw3thwe78wyntwehnrt4wy8et7w3th');
+            
+            error_log('CUSTOM NVK logging: '. json_encode($request));
             $response = $this->execute($request, [
                 'grant_type' => $apiConfig->getGrantType(),
                 'client_id' => $apiConfig->getClientId(),
@@ -102,12 +109,22 @@ class APIClient
                 'password' => $apiConfig->getPassword(),
             ]);
         } catch (GuzzleException | APIException | OneWelcomeAPIException | JsonException | ClientException $exception) {
+
+            error_log(json_encode($exception));
+            error_log(json_encode($exception->getMessage()));
+
             throw APIException::errorObtainingToken($exception);
         }
 
         if (false === isset($response['access_token'])) {
+            error_log(json_encode($response));
+            error_log(json_encode($response->getStatusCode()));
             throw APIException::unexpectedResponse(implode(' ', $response));
         }
+
+        error_log('-- NOTHING WENT WRONG WITH GENERATING TOKEN --');
+
+        error_log('-- CIAM END OF CUSTOM LOGGING');
 
         return Credentials::fromOneWelcomeAPIResponse($response);
     }

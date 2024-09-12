@@ -65,7 +65,11 @@ class Address
         $instance = new self();
         $instance->street = $data['Street'] ?? null;
         $instance->houseNumber = $data['HouseNumber'] ?? null;
-        $instance->houseNumberAddition = $data['HouseNumberAddition'] ?? null;
+        if(isset($data['HouseNumberAddition']) && is_array($data['HouseNumberAddition'])){
+            $instance->houseNumberAddition = null;
+        }else{
+            $instance->houseNumberAddition = $data['HouseNumberAddition'] ?? null;
+        }
         $instance->postalCode = $data['PostalCode'] ?? null;
         $instance->city = $data['City'] ?? null;
         $instance->country = $data['Country'] ?? null;

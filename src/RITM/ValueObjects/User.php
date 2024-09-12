@@ -84,6 +84,10 @@ class User
      */
     private $isB2C = false;
     /**
+     * @var string
+     */
+    private $lastActivityDate = '0000-00-00 00:00:00';
+    /**
      * @var bool
      */
     private $hasLoyaltyCard = false;
@@ -156,6 +160,7 @@ class User
         $instance->customerId = (string) $info[getenv('RITM_CUSTOMER_KEY')];
         $instance->isB2B = (bool) ($info['IsB2B'] ?? false);
         $instance->isB2C = (bool) ($info['IsB2C'] ?? false);
+        $instance->lastActivityDate = ($info['LastActivityDate'] ? date('Y-m-d H:i:s', strtotime($info['LastActivityDate'])) : '0000-00-00 00:00:00');
         $instance->isEmployee = (bool) ($profile['IsEmployee'] ?? false);
         $instance->hasEmployeeDiscount = (bool) ($profile['HasEmployeeDiscount'] ?? false);
         $instance->hasLoyaltyCard = (bool) ($info['HasLoyaltyCard'] ?? false);
@@ -323,6 +328,17 @@ class User
     public function setBirthDate(string $birthDate): self
     {
         $this->birthDate = $birthDate;
+        return $this;
+    }
+
+    public function getLastActivityDate(): ?string
+    {
+        return $this->lastActivityDate;
+    }
+
+    public function setLastActivityDate(string $lastActivityDate): self
+    {
+        $this->lastActivityDate = $lastActivityDate;
         return $this;
     }
 
@@ -541,7 +557,7 @@ class User
 
         return $output;
     }
-
+    
     public function getPrimaryEmailAddress(): ?Email
     {
         foreach ($this->emailCollection as $email) {
