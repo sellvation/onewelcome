@@ -46,6 +46,10 @@ class User
      */
     private $state;
 
+    private $isPasswordChangeRequired;
+
+    private $lastSuccessfulLogin;
+
     /**
      * @var string
      */
@@ -102,7 +106,7 @@ class User
     /**
      * @var bool
      */
-    private $hasAgreedPrivacyPolicy = false;
+    private $hasAgreedPLUSPrivacyPolicy = false;
     /**
      * @var b2bCollection
      */
@@ -164,8 +168,10 @@ class User
         $instance->isEmployee = (bool) ($profile['IsEmployee'] ?? false);
         $instance->hasEmployeeDiscount = (bool) ($profile['HasEmployeeDiscount'] ?? false);
         $instance->hasLoyaltyCard = (bool) ($info['HasLoyaltyCard'] ?? false);
-        $instance->hasAgreedPrivacyPolicy = (bool) ($info['HasAgreedPLUSPrivacyPolicy'] ?? false);
+        $instance->hasAgreedPLUSPrivacyPolicy = (bool) ($info['HasAgreedPLUSPrivacyPolicy'] ?? false);
         $instance->state = $profile['urn:scim:schemas:extension:iwelcome:1.0']['state'];
+        $instance->lastSuccessfulLogin = $profile['urn:scim:schemas:extension:iwelcome:1.0']['lastSuccessfulLogin'];
+        $instance->IsPasswordChangeRequired = $profile['urn:scim:schemas:extension:iwelcome:1.0']['IsPasswordChangeRequired'];
         $instance->birthDate = $profile['urn:scim:schemas:extension:iwelcome:1.0']['birthDate'] ?? null;
         $instance->emailCollection = EmailCollection::fromArray($profile['emails']);
 
@@ -320,6 +326,17 @@ class User
         return $this->state;
     }
 
+    public function getIsPasswordChangeRequired(): ?bool
+    {
+        return $this->isPasswordChangeRequired;
+    }
+
+    public function setIsPasswordChangeRequired($isPasswordChangeRequired): self
+    {
+        $this->isPasswordChangeRequired = $isPasswordChangeRequired;
+        return $this;
+    }
+
     public function getBirthDate(): ?string
     {
         return $this->birthDate;
@@ -342,14 +359,14 @@ class User
         return $this;
     }
 
-    public function getHasAgreedPrivacyPolicy(): bool
+    public function getHasAgreedPLUSPrivacyPolicy(): bool
     {
-        return $this->hasAgreedPrivacyPolicy;
+        return $this->hasAgreedPLUSPrivacyPolicy;
     }
 
-    public function setHasAgreedPrivacyPolicy(bool $hasAgreedPrivacyPolicy): self
+    public function setHasAgreedPLUSPrivacyPolicy(bool $hasAgreedPLUSPrivacyPolicy): self
     {
-        $this->hasAgreedPrivacyPolicy = $hasAgreedPrivacyPolicy;
+        $this->hasAgreedPLUSPrivacyPolicy = $hasAgreedPLUSPrivacyPolicy;
         return $this;
     }
 
@@ -445,6 +462,17 @@ class User
         return $this;
     }
 
+    public function getLastSuccessfulLogin(): ?string
+    {
+        return $this->lastSuccessfulLogin;
+    }
+
+    public function setLastSuccessfulLogin($lastSuccesfulLogin): self
+    {
+        $this->lastSuccessfulLogin = $lastSuccesfulLogin;
+        return $this;
+    }
+
     /**
      * Returns a unique fingerprint for the current data in the User object.
      * When user data changes, the fingerprint will change as well.
@@ -476,7 +504,11 @@ class User
             'firstName' => $this->firstName,
             'middleName' => $this->middleName,
             'state' => $this->state,
-            'hasAgreedPrivacyPolicy' => $this->hasAgreedPrivacyPolicy,
+            'hasAgreedPrivacyPolicy' => $this->hasAgreedPLUSPrivacyPolicy,
+            'hasAgreedPLUSPrivacyPolicy' => $this->hasAgreedPLUSPrivacyPolicy,
+            'IsPasswordChangeRequired' => $this->isPasswordChangeRequired,
+            'lastActivityDate' => $this->lastActivityDate,
+            'lastSuccessfulLogin' => $this->lastSuccessfulLogin,
             'birthDate' => $this->birthDate,
             'emails' => $this->emailCollection->toArray(),
             'phoneNumberCollection' => $this->phoneNumberCollection->toArray(),
@@ -511,21 +543,20 @@ class User
                 ],
                 'urn:scim:schemas:extension:iwelcome:1.0' => [
                     'state' => $this->getState(),
-                    'birthDate' => $this->getBirthDate()
+                    'birthDate' => $this->getBirthDate(),
+                    'lastSuccessfulLogin' => $this->getLastSuccessfulLogin(),
+                    'IsPasswordChangeRequired' => $this->getIsPasswordChangeRequired(),
                 ],
                 getenv('RITM_CUSTOMER_TAG') => [
                     getenv('RITM_CUSTOMER_KEY') => $this->getCustomerId(),
                     'IsB2B' => $this->isB2B(),
                     'IsB2C' => $this->isB2C(),
                     'HasLoyaltyCard' => $this->hasLoyaltyCard(),
-                    'HasAgreedPLUSPrivacyPolicy' => $this->getHasAgreedPrivacyPolicy(),
+                    'HasAgreedPLUSPrivacyPolicy' => $this->getHasAgreedPLUSPrivacyPolicy(),
+                    'LastActivityDate' => $this->getLastActivityDate(),
                 ]
             ]
         ];
-
-        if ($b2bCollection->count() > 0) {
-            $output['B2BAccounts'] = $b2bCollection->toOneWelcomeFormat();
-        }
 
         if (null !== $payment) {
             $output['Payment'] = $payment->toOneWelcomeFormat();
@@ -570,4 +601,6 @@ class User
 
         return null;
     }
+
+
 }
