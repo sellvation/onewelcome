@@ -171,7 +171,7 @@ class User
         $instance->hasAgreedPLUSPrivacyPolicy = (bool) ($info['HasAgreedPLUSPrivacyPolicy'] ?? false);
         $instance->state = $profile['urn:scim:schemas:extension:iwelcome:1.0']['state'];
         $instance->lastSuccessfulLogin = $profile['urn:scim:schemas:extension:iwelcome:1.0']['lastSuccessfulLogin'];
-        $instance->isPasswordChangeRequired = $profile['urn:scim:schemas:extension:iwelcome:1.0']['IsPasswordChangeRequired'];
+        $instance->isPasswordChangeRequired = (bool) ($profile['urn:scim:schemas:extension:iwelcome:1.0']['IsPasswordChangeRequired'] ?? false);
         $instance->birthDate = $profile['urn:scim:schemas:extension:iwelcome:1.0']['birthDate'] ?? null;
         $instance->emailCollection = EmailCollection::fromArray($profile['emails']);
 
@@ -506,7 +506,7 @@ class User
             'state' => $this->state,
             'hasAgreedPrivacyPolicy' => $this->hasAgreedPLUSPrivacyPolicy,
             'hasAgreedPLUSPrivacyPolicy' => $this->hasAgreedPLUSPrivacyPolicy,
-            'IsPasswordChangeRequired' => $this->isPasswordChangeRequired,
+            'isPasswordChangeRequired' => $this->isPasswordChangeRequired,
             'lastActivityDate' => $this->lastActivityDate,
             'lastSuccessfulLogin' => $this->lastSuccessfulLogin,
             'birthDate' => $this->birthDate,
