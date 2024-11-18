@@ -171,7 +171,7 @@ class User
         $instance->hasAgreedPLUSPrivacyPolicy = (bool) ($info['HasAgreedPLUSPrivacyPolicy'] ?? false);
         $instance->state = $profile['urn:scim:schemas:extension:iwelcome:1.0']['state'];
         $instance->lastSuccessfulLogin = $profile['urn:scim:schemas:extension:iwelcome:1.0']['lastSuccessfulLogin'];
-        $instance->IsPasswordChangeRequired = $profile['urn:scim:schemas:extension:iwelcome:1.0']['IsPasswordChangeRequired'];
+        $instance->isPasswordChangeRequired = $profile['urn:scim:schemas:extension:iwelcome:1.0']['IsPasswordChangeRequired'];
         $instance->birthDate = $profile['urn:scim:schemas:extension:iwelcome:1.0']['birthDate'] ?? null;
         $instance->emailCollection = EmailCollection::fromArray($profile['emails']);
 
