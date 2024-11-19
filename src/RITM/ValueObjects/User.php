@@ -107,6 +107,12 @@ class User
      * @var bool
      */
     private $hasAgreedPLUSPrivacyPolicy = false;
+
+    /**
+     * @var string
+     */
+    private $privacyPolicyConsentDate = '0000-00-00 00:00:00';
+
     /**
      * @var b2bCollection
      */
@@ -169,6 +175,7 @@ class User
         $instance->hasEmployeeDiscount = (bool) ($profile['HasEmployeeDiscount'] ?? false);
         $instance->hasLoyaltyCard = (bool) ($info['HasLoyaltyCard'] ?? false);
         $instance->hasAgreedPLUSPrivacyPolicy = (bool) ($info['HasAgreedPLUSPrivacyPolicy'] ?? false);
+        $instance->privacyPolicyConsentDate = ($info['PrivacyPolicyConsentDate'] ? date('Y-m-d H:i:s', strtotime($info['PrivacyPolicyConsentDate'])) : '0000-00-00 00:00:00');
         $instance->state = $profile['urn:scim:schemas:extension:iwelcome:1.0']['state'];
         $instance->lastSuccessfulLogin = $profile['urn:scim:schemas:extension:iwelcome:1.0']['lastSuccessfulLogin'];
         $instance->isPasswordChangeRequired = (bool) ($profile['urn:scim:schemas:extension:iwelcome:1.0']['IsPasswordChangeRequired'] ?? false);
@@ -370,6 +377,17 @@ class User
         return $this;
     }
 
+    public function getPrivacyPolicyConsentDate(): ?string
+    {
+        return $this->privacyPolicyConsentDate;
+    }
+
+    public function setPrivacyPolicyConsentDate(string $privacyPolicyConsentDate): self
+    {
+        $this->privacyPolicyConsentDate = $privacyPolicyConsentDate;
+        return $this;
+    }
+
     public function isB2B(): bool
     {
         return $this->isB2B;
@@ -506,6 +524,7 @@ class User
             'state' => $this->state,
             'hasAgreedPrivacyPolicy' => $this->hasAgreedPLUSPrivacyPolicy,
             'hasAgreedPLUSPrivacyPolicy' => $this->hasAgreedPLUSPrivacyPolicy,
+            'privacyPolicyConsentDate' => $this->privacyPolicyConsentDate,
             'isPasswordChangeRequired' => $this->isPasswordChangeRequired,
             'lastActivityDate' => $this->lastActivityDate,
             'lastSuccessfulLogin' => $this->lastSuccessfulLogin,
@@ -553,6 +572,7 @@ class User
                     'IsB2C' => $this->isB2C(),
                     'HasLoyaltyCard' => $this->hasLoyaltyCard(),
                     'HasAgreedPLUSPrivacyPolicy' => $this->getHasAgreedPLUSPrivacyPolicy(),
+                    'PrivacyPolicyConsentDate' => $this->getPrivacyPolicyConsentDate(),
                     'LastActivityDate' => $this->getLastActivityDate(),
                 ]
             ]
