@@ -534,7 +534,7 @@ class User
             'postAddressCollection' => $this->postAddressCollection->toArray(),
             'invoiceAddressCollection' => $this->invoiceAddressCollection->toArray(),
             'deliveryAddressCollection' => $this->deliveryAddressCollection->toArray(),
-            'preferencesOrder' => $this->preferencesOrder->toArray(),
+            'preferencesOrder' => $this->preferencesOrder ? $this->preferencesOrder->toArray() : null,
             'isB2B' => $this->isB2B,
             'isB2C' => $this->isB2C,
             'hasLoyaltyCard' => $this->hasLoyaltyCard,
